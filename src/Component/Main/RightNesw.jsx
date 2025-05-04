@@ -1,16 +1,19 @@
-import React from 'react';
-import SocialLogin from './SocialLogin';
-import FindUs from '../../Layout/FindUs';
-import Qzon from '../../Layout/Qzon';
+import React, { useContext } from "react";
+import SocialLogin from "./SocialLogin";
+import FindUs from "../../Layout/FindUs";
+import Qzon from "../../Layout/Qzon";
+import AuthProvider, { AuthContext } from "../../Provider/AuthProvider";
 
 const RightNesw = () => {
-    return (
-        <div className='space-y-8'>
-            <SocialLogin/>
-            <FindUs></FindUs>
-            <Qzon></Qzon>
-        </div>
-    );
+  const { user } = useContext(AuthContext);
+
+  return (
+    <div className="space-y-8">
+      {user ? "" : <SocialLogin />}
+      <FindUs></FindUs>
+      <Qzon></Qzon>
+    </div>
+  );
 };
 
 export default RightNesw;

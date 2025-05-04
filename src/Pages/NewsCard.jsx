@@ -1,9 +1,10 @@
 import { CiShare2 } from "react-icons/ci";
 import { FaStar, FaEye, FaRegBookmark } from "react-icons/fa";
+import { Link } from "react-router";
 // import moment from "moment";
 
 const NewsCard = ({ news }) => {
-  const { title, rating, total_view, author, thumbnail_url, details } = news;
+  const { title,id, rating, total_view, author, thumbnail_url, details } = news;
 
   const formattedDate = new Date(
     news.author.published_date
@@ -45,9 +46,9 @@ const NewsCard = ({ news }) => {
       <div className="card-body p-4">
         <p className="text-sm text-gray-700">
           {details.length > 250 ? `${details.slice(0, 250)}...` : details}
-          <span className="text-primary font-medium cursor-pointer ml-1">
+          <Link to={`/news-details/${id}`} className="text-secondary font-medium cursor-pointer ml-1">
             Read More
-          </span>
+          </Link>
         </p>
 
         <div className="flex justify-between items-center mt-3">

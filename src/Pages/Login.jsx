@@ -1,19 +1,56 @@
-import React, { use } from "react";
-import { Link } from "react-router";
+import React, { use, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../Provider/AuthProvider";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../Firebase/firebase.config";
+import { Bounce, toast } from "react-toastify";
 
 const Login = () => {
-    const {signInUser} = use(AuthContext)
+  const [err, setErr] = useState("");
+  const { signInUser } = use(AuthContext);
+  const emailRef = useRef();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogIn = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    signInUser(email,password).then(res => {
-        console.log(res.user)
-    }).catch(err => {
-        alert(err.message)
-    })
+    signInUser(email, password)
+      .then((res) => {
+        if (!res.user.emailVerified) {
+          toast(
+            "Please check your email address. and confirm your varification email"
+          );
+          return;
+        }
+        toast.success("User Login Successful", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+        navigate(`${location.state ? location.state : "/"}`);
+      })
+      .catch((err) => {
+        setErr(err.message);
+      });
+  };
+
+  const handleChangePassword = () => {
+    const email = emailRef.current.value;
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("A password reset email is sent . please check your email");
+      })
+      .catch((err) => {
+        setErr(err.message);
+      });
   };
 
   return (
@@ -31,8 +68,10 @@ const Login = () => {
             <input
               type="email"
               name="email"
+              ref={emailRef}
               className="input bg-base-200"
               placeholder="Email"
+              required
             />
             <label className="label text-primary text-sm font-bold mt-2">
               Password
@@ -42,11 +81,19 @@ const Login = () => {
               name="password"
               className="input bg-base-200"
               placeholder="Password"
+              required
             />
             <div>
-              <a className="link link-hover">Forgot password?</a>
+              <a onClick={handleChangePassword} className="link link-hover">
+                Forgot password?
+              </a>
             </div>
-            <button type="submit" className="btn btn-primary mt-4">Login</button>
+
+            {err && <p className="text-red-600">{err}</p>}
+
+            <button type="submit" className="btn btn-primary mt-4">
+              Login
+            </button>
             <p>
               Dont’t Have An Account ?{" "}
               <Link

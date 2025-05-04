@@ -8,7 +8,7 @@ const Categorys = () => {
         fetch('../categories.json').then(res => res.json()).then(data => setCategoryData(data))
     },[])
     
-    console.log(categoryData)
+    
     return (
         <div>
             <h1 className='text-xl font-semibold'>All Categories ({categoryData.length}) </h1>
